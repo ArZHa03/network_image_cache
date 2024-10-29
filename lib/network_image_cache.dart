@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -19,7 +18,7 @@ class NetworkImageCache extends StatefulWidget {
       {required String url,
       double? width,
       double? height,
-      Duration fadeInDuration = const Duration(milliseconds: 500),
+      Duration fadeInDuration = const Duration(milliseconds: 300),
       super.key})
       : _height = height,
         _width = width,
@@ -94,7 +93,6 @@ class _NetworkImageCacheState extends State<NetworkImageCache> with TickerProvid
                   }
                   return const SizedBox();
                 },
-                filterQuality: ui.FilterQuality.none,
                 frameBuilder: (context, a, b, c) {
                   if (animationController.status != AnimationStatus.completed) animationController.forward();
                   return a;
