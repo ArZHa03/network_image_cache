@@ -1,6 +1,6 @@
 name: network_image_cache
 description: "Network image with cache technology."
-version: 1.0.1
+version: 1.1.1
 homepage: ''
 
 environment:

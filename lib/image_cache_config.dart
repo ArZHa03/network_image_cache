@@ -97,5 +97,5 @@ class _ImageCacheConfig {
     }
   }
 
-  static _keyFromUrl(String url) => const Uuid().v5('4r.-z.-h4', url);
+  static _keyFromUrl(String url) => const Uuid().v5('6ba7b811-9dad-11d1-80b4-00c04fd430c8', url);
 }
