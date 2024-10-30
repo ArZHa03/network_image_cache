@@ -70,38 +70,49 @@ class _NetworkImageCacheState extends State<NetworkImageCache> with TickerProvid
   Widget build(BuildContext context) {
     if (error != null) _logErrors(error);
 
-    return SizedBox(
-      child: Stack(
-        alignment: Alignment.center,
-        fit: StackFit.passthrough,
-        children: [
-          if (animationController.status != AnimationStatus.completed) const SizedBox(),
-          if (imageData != null)
-            FadeTransition(
-              opacity: animation,
-              child: Image.memory(
-                imageData!,
+    return imageData != null
+        ? FadeTransition(
+            opacity: animation,
+            child: Image.memory(
+              imageData!,
+              width: widget._width,
+              height: widget._height,
+              key: widget.key,
+              fit: BoxFit.contain,
+              errorBuilder: (a, c, v) {
+                if (animationController.status != AnimationStatus.completed) {
+                  animationController.forward();
+                  _logErrors(c);
+                  _ImageCacheConfig.deleteCachedImage(imageUrl: widget._url);
+                }
+                return Container(
+                  width: widget._width,
+                  height: widget._height,
+                  color: Colors.grey,
+                  child: Center(child: Icon(Icons.error, color: Colors.red)),
+                );
+              },
+              frameBuilder: (context, a, b, c) {
+                if (animationController.status != AnimationStatus.completed) animationController.forward();
+                return a;
+              },
+            ),
+          )
+        : ValueListenableBuilder<double>(
+            valueListenable: progressPercentage,
+            builder: (context, value, child) {
+              return SizedBox(
                 width: widget._width,
                 height: widget._height,
-                key: widget.key,
-                fit: BoxFit.contain,
-                errorBuilder: (a, c, v) {
-                  if (animationController.status != AnimationStatus.completed) {
-                    animationController.forward();
-                    _logErrors(c);
-                    _ImageCacheConfig.deleteCachedImage(imageUrl: widget._url);
-                  }
-                  return const SizedBox();
-                },
-                frameBuilder: (context, a, b, c) {
-                  if (animationController.status != AnimationStatus.completed) animationController.forward();
-                  return a;
-                },
-              ),
-            ),
-        ],
-      ),
-    );
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: value,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
+              );
+            },
+          );
   }
 
   Future<void> _loadAsync(String url) async {
